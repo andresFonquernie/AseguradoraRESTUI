@@ -61,8 +61,8 @@ namespace AseguradoraRESTUI.Views
             }
 
             ClientServices cl = new ClientServices();
-            String resp = await cl.put(id, dni, name);
-            txtName.Text = resp;
+            String resp = await cl.post(id, dni, name);
+            txtDNI.Text = resp;
 
             Boolean added = true;
             Boolean dniCheck = false;

@@ -79,7 +79,8 @@ namespace AseguradoraRESTUI.Views
 
 
             ContractsServices cnt = new ContractsServices();
-            await cnt.put(idClient, id, date, idPolicy);
+            String resp = await cnt.put(idClient, id, date, idPolicy);
+            txtIDClient.Text = resp;
             //if (!added)
             //{
             //    MessageBox.Show("Error, your policy exists in the database", "Error adding to DB", MessageBoxButton.OK, MessageBoxImage.Error);
