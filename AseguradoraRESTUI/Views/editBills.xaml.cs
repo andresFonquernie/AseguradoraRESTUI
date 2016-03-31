@@ -86,7 +86,7 @@ namespace AseguradoraRESTUI.Views
             //}
             //else
             //{
-            //    MessageBox.Show("Added the new Bill to our database", "Action completed", MessageBoxButton.OK, MessageBoxImage.Information);
+            MessageBox.Show("Edited the Bill from our database", "Action completed", MessageBoxButton.OK, MessageBoxImage.Information);
             //}
             
         }

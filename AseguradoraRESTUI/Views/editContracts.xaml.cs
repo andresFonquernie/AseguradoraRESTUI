@@ -87,10 +87,8 @@ namespace AseguradoraRESTUI.Views
             //}
             //else
             //{
-            MessageBox.Show("Added the new contract to our database", "Action completed", MessageBoxButton.OK, MessageBoxImage.Information);
+            MessageBox.Show("Edited the contract from our database", "Action completed", MessageBoxButton.OK, MessageBoxImage.Information);
             //}
-
-            this.Close();
         }
 
         private void btnCancelar_Click(object sender, RoutedEventArgs e)
