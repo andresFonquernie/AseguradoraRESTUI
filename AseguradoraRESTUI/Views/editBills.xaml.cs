@@ -77,7 +77,7 @@ namespace AseguradoraRESTUI.Views
             }
 
             BillServices bs = new BillServices();
-            String resp = await bs.post(idClient, id, money);
+            String resp = await bs.put(idClient, id, money);
             txtIDClient.Text = resp;
 
             //if (!added)
