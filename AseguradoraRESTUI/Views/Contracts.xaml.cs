@@ -1,24 +1,15 @@
 ﻿using AseguradoraRESTUI.Models;
 using AseguradoraRESTUI.Services;
-using AseguradoraRESTUI.Views;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Globalization;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
 using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace AseguradoraRESTUI
 {
-    public partial class Contracts : Window
+    public partial class Contracts
     {
         public Contracts()
         {
@@ -27,26 +18,26 @@ namespace AseguradoraRESTUI
 
         private void search_CLick(object sender, RoutedEventArgs e)
         {
-            refreshTable(txtBoxID.Text);
+            RefreshTable(TxtBoxId.Text);
         }
 
         private void all_Click(object sender, RoutedEventArgs e)
         {
-            refreshTable("All");
+            RefreshTable("All");
         }
 
-        private async void refreshTable(String text)
+        private void RefreshTable(String text)
         {
             List<Contract> contracts;
             if (!text.Equals("All"))
             {
                 int idContract;
-                Boolean idCheck = Int32.TryParse(txtBoxSearch.Text, out idContract);
+                Boolean idCheck = Int32.TryParse(TxtBoxSearch.Text, out idContract);
 
                 if (idCheck)
                 {
                     ContractsServices cS = new ContractsServices();
-                    contracts = await cS.get(idContract);
+                    contracts = cS.Get(idContract);
                     RemoveRows();
                     AddRows(contracts);
                 }
@@ -59,7 +50,7 @@ namespace AseguradoraRESTUI
             else
             {
                 ContractsServices cS = new ContractsServices();
-                contracts = await cS.get();
+                contracts = cS.Get();
                 RemoveRows();
                 AddRows(contracts);
             }
@@ -74,10 +65,10 @@ namespace AseguradoraRESTUI
                 TableRow tR = new TableRow();
                 rg.Rows.Add(tR);
 
-                TableCell id = new TableCell(new Paragraph(new Run((contract[i].ID.ToString()))));
-                TableCell idClient = new TableCell(new Paragraph(new Run(contract[i].Client.ID.ToString())));
-                TableCell date = new TableCell(new Paragraph(new Run(contract[i].Date.ToString())));
-                TableCell policy = new TableCell(new Paragraph(new Run(contract[i].policy.ID.ToString())));
+                TableCell id = new TableCell(new Paragraph(new Run((contract[i].Id.ToString()))));
+                TableCell idClient = new TableCell(new Paragraph(new Run(contract[i].Client.Id.ToString())));
+                TableCell date = new TableCell(new Paragraph(new Run(contract[i].Date.ToString(CultureInfo.CurrentCulture))));
+                TableCell policy = new TableCell(new Paragraph(new Run(contract[i].Policy.Id.ToString())));
 
 
                 if (i % 2 == 0)
@@ -96,7 +87,7 @@ namespace AseguradoraRESTUI
                 tR.Cells.Add(policy);
             }
             TableContracts.RowGroups.Add(rg);
-            btnEditar.IsEnabled = true;
+            BtnEditar.IsEnabled = true;
         }
 
         private void RemoveRows()
@@ -107,39 +98,35 @@ namespace AseguradoraRESTUI
             }
         }
 
-        private void contracts_Click(object sender, RoutedEventArgs e)
-        {
-        }
-
         private void editContract_Click(object sender, RoutedEventArgs e)
         {
-            editContracts ed = new editContracts();
+            EditContracts ed = new EditContracts();
             ed.Show();
         }
 
-        private async void enviar_Click(object sender, RoutedEventArgs e)
+        private void enviar_Click(object sender, RoutedEventArgs e)
         {
             int id;
             int idClient;
-            DateTime date = DateTime.Parse(datePicker.Text);
+            DateTime date = DateTime.Parse(DatePicker.Text);
             int idPolicy;
             bool checkNumber;
 
-            checkNumber = Int32.TryParse(txtBoxID.Text, out id);
+            checkNumber = Int32.TryParse(TxtBoxId.Text, out id);
             if (!checkNumber)
             {
                 MessageBox.Show("Error, the ID must be a number", "Error with parameter: ID", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
 
-            checkNumber = Int32.TryParse(txtBoxIDClient.Text, out idClient);
+            checkNumber = Int32.TryParse(TxtBoxIdClient.Text, out idClient);
             if (!checkNumber)
             {
                 MessageBox.Show("Error, the ID Client must be a number", "Error with parameter: ID Client", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
 
-            checkNumber = Int32.TryParse(txtBoxPolicy.Text, out idPolicy);
+            checkNumber = Int32.TryParse(TxtBoxPolicy.Text, out idPolicy);
             if (!checkNumber)
             {
                 MessageBox.Show("Error, the ID Policy must be a number", "Error with parameter: ID Policy", MessageBoxButton.OK, MessageBoxImage.Error);
@@ -148,7 +135,7 @@ namespace AseguradoraRESTUI
 
 
             ContractsServices cnt = new ContractsServices();
-            await cnt.post(idClient, id, date, idPolicy);
+            cnt.Post(idClient, id, date, idPolicy);
             //if (!added)
             //{
             //    MessageBox.Show("Error, your policy exists in the database", "Error adding to DB", MessageBoxButton.OK, MessageBoxImage.Error);
@@ -163,14 +150,14 @@ namespace AseguradoraRESTUI
         {
             Bills bill = new Bills();
             bill.Show();
-            this.Close();
+            Close();
         }
 
         private void wnClients_click(object sender, RoutedEventArgs e)
         {
             Clients cl = new Clients();
             cl.Show();
-            this.Close();
+            Close();
         }
     }
 }

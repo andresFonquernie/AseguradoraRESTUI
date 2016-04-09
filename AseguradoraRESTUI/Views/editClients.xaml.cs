@@ -1,99 +1,79 @@
-﻿using AseguradoraRESTUI.Models;
-using AseguradoraRESTUI.Services;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
+using AseguradoraRESTUI.Models;
+using AseguradoraRESTUI.Services;
 
-namespace AseguradoraRESTUI.Views
+namespace AseguradoraRESTUI
 {
     /// <summary>
     /// Lógica de interacción para editClients.xaml
     /// </summary>
-    public partial class editClients : Window
+    public partial class EditClients
     {
-        public editClients()
+        public EditClients()
         {
             InitializeComponent();
         }
 
-        private async void editClient_initializated(object sender, EventArgs e)
+        private void editClient_initializated(object sender, EventArgs e)
         {
             ClientServices cl = new ClientServices();
-            List<Client> client = await cl.get();
+            List<Client> client = cl.Get();
             foreach(Client person in client)
             {
-                cboxID.Items.Add(person.ID);
+                CboxId.Items.Add(person.Id);
             }
         }
 
-        private async void cboxIDChange(object sender, SelectionChangedEventArgs e)
+        private void CboxIdChange(object sender, SelectionChangedEventArgs e)
         {
             ClientServices cl = new ClientServices();
-            int idClient = Int32.Parse(cboxID.SelectedItem.ToString());
-            List<Client> client = await cl.get(idClient);
-            txtDNI.Text = client[0].DNI;
-            txtName.Text = client[0].Name;
-            btnAceptar.IsEnabled = true;
-            btnBorrar.IsEnabled = true;
+            int idClient = Int32.Parse(CboxId.SelectedItem.ToString());
+            List<Client> client = cl.Get(idClient);
+            TxtDni.Text = client[0].Dni;
+            TxtName.Text = client[0].Name;
+            BtnAceptar.IsEnabled = true;
+            BtnBorrar.IsEnabled = true;
         }
 
-        private async void btnAceptar_Click(object sender, RoutedEventArgs e)
+        private void btnAceptar_Click(object sender, RoutedEventArgs e)
         {
-            int id;
-            string dni = txtDNI.Text;
-            string name = txtName.Text;
-
-            bool result = Int32.TryParse(cboxID.SelectedItem.ToString(), out id);
-            if (!result)
-            {
-                MessageBox.Show("Error, the ID must be a number", "Error with parameter: ID", MessageBoxButton.OK, MessageBoxImage.Error);
-                return;
-            }
+            int id = Int32.Parse(CboxId.SelectedItem.ToString());
+            string dni = TxtDni.Text;
+            string name = TxtName.Text;
 
             ClientServices cl = new ClientServices();
-            String resp = await cl.put(id, dni, name);
-            txtDNI.Text = resp;
+            String resp = cl.Put(id, dni, name);
 
-            Boolean added = true;
-            Boolean dniCheck = false;
+
+            Boolean dniCheck = resp.Contains("DNI malformed");
 
             //No funciona
             if (dniCheck)
             {
                 MessageBox.Show("Error, the format of the DNI is 11111111A", "Error adding to DB", MessageBoxButton.OK, MessageBoxImage.Error);
             }
-            if (!added)
-            {
-                MessageBox.Show("Error, your client exists in the database", "Error adding to DB", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
             else
             {
                 MessageBox.Show("Edited the client from our database", "Action completed", MessageBoxButton.OK, MessageBoxImage.Information);
+                Close();
             }
         }
 
         private void btnCancelar_Click(object sender, RoutedEventArgs e)
         {
-            this.Close();
+            Close();
         }
 
-        private async void btnBorrar_Click(object sender, RoutedEventArgs e)
+        private void btnBorrar_Click(object sender, RoutedEventArgs e)
         {
-            ClientServices cl = new ClientServices();
-            int idClient = Int32.Parse(cboxID.SelectedItem.ToString());
-            await cl.delete(idClient);
+            var cl = new ClientServices();
+            var idClient = int.Parse(CboxId.SelectedItem.ToString());
+            cl.Delete(idClient);
             MessageBox.Show("Deleted the client from our database", "Action completed", MessageBoxButton.OK, MessageBoxImage.Information);
-            this.Close();
+            Close();
         }
     }
 }

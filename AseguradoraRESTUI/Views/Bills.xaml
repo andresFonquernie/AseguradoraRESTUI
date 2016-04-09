@@ -17,10 +17,10 @@
                     <ColumnDefinition Width="Auto"></ColumnDefinition>
                     <ColumnDefinition Width="4*"></ColumnDefinition>
                 </Grid.ColumnDefinitions>
-                <TextBlock x:Name="txtID" Grid.Column="0" Margin="20,10,20,0">ID:</TextBlock>
-                <TextBox Grid.Column="1" x:Name="txtBoxSearch" Margin="0,10,10,0" HorizontalAlignment="Right" Width="100"></TextBox>
-                <Button Grid.Column="2" x:Name="btnSearch" Margin="10,0,0,0" Click="search_CLick">Search</Button>
-                <Button Grid.Column="3" x:Name="btnAll" Margin="10,0,20,0" Click="all_Click">All</Button>
+                <TextBlock x:Name="TxtId" Grid.Column="0" Margin="20,10,20,0">ID:</TextBlock>
+                <TextBox Grid.Column="1" x:Name="TxtBoxSearch" Margin="0,10,10,0" HorizontalAlignment="Right" Width="100"></TextBox>
+                <Button Grid.Column="2" x:Name="BtnSearch" Margin="10,0,0,0" Click="search_CLick">Search</Button>
+                <Button Grid.Column="3" x:Name="BtnAll" Margin="10,0,20,0" Click="all_Click">All</Button>
             </Grid>
         </StackPanel>
 
@@ -30,8 +30,8 @@
                 <FlowDocument>
                     <Table Name="TableBills">
                         <Table.Columns>
-                            <TableColumn Name="IDClient"></TableColumn>
-                            <TableColumn Name="ID"></TableColumn>
+                            <TableColumn Name="IdClient"></TableColumn>
+                            <TableColumn Name="Id"></TableColumn>
                             <TableColumn Name="Money"></TableColumn>
                         </Table.Columns>
                         <TableRowGroup>
@@ -56,8 +56,8 @@
                     <ColumnDefinition Width="*"></ColumnDefinition>
                     <ColumnDefinition Width="*"></ColumnDefinition>
                 </Grid.ColumnDefinitions>
-                <Button x:Name="btnBills" Grid.Column="1" Margin="10,0" Click="all_Click" Content="Bills"/>
-                <Button x:Name="btnEditar" Grid.Column="2" Click="editBills_Click" IsEnabled="False">Edit</Button>
+                <Button x:Name="BtnBills" Grid.Column="1" Margin="10,0" Click="all_Click" Content="Bills"/>
+                <Button x:Name="BtnEditar" Grid.Column="2" Click="editBills_Click" IsEnabled="False">Edit</Button>
             </Grid>
         </StackPanel>
 
@@ -79,10 +79,10 @@
                 <TextBlock Grid.Column="0" Text="ID Client" Grid.Row="0" Margin="0,10,20,0" Height="18" VerticalAlignment="Top"></TextBlock>
                 <TextBlock Grid.Column="0" Text="ID" Grid.Row="1" Margin="0,10,20,0"></TextBlock>
                 <TextBlock Grid.Column="0" Text="Money to pay" Grid.Row="2" Margin="0,10,20,0"></TextBlock>
-                <TextBox Grid.Column="1" Grid.Row="0" x:Name="txtBoxIDClient" Margin="0,10,20,0"></TextBox>
-                <TextBox Grid.Column="1" Grid.Row="1" x:Name="txtBoxID" Margin="0,10,20,0"></TextBox>
-                <TextBox Grid.Column="1" Grid.Row="2" x:Name="txtBoxMoney" Margin="0,10,20,0"></TextBox>
-                <Button Grid.Column="1" Grid.Row="4" x:Name="btnEnviar" Margin="0,10,20,0" Click="enviar_Click">Send</Button>
+                <TextBox Grid.Column="1" Grid.Row="0" x:Name="TxtBoxIdClient" Margin="0,10,20,0"></TextBox>
+                <TextBox Grid.Column="1" Grid.Row="1" x:Name="TxtBoxId" Margin="0,10,20,0"></TextBox>
+                <TextBox Grid.Column="1" Grid.Row="2" x:Name="TxtBoxMoney" Margin="0,10,20,0"></TextBox>
+                <Button Grid.Column="1" Grid.Row="4" x:Name="BtnEnviar" Margin="0,10,20,0" Click="enviar_Click">Send</Button>
             </Grid>
         </StackPanel>
 
@@ -94,9 +94,9 @@
                     <ColumnDefinition Width="Auto"></ColumnDefinition>
                     <ColumnDefinition Width="Auto"></ColumnDefinition>
                 </Grid.ColumnDefinitions>
-                <Button Grid.Column="1" x:Name="btnWnBills" Content="Bills" IsEnabled="False"/>
-                <Button Grid.Column="2" x:Name="btnWnClients" Content="Clients" Margin="10,0" Click="wnClients_click"/>
-                <Button Grid.Column="3" x:Name="btnWnContracts" Content="Contracts" Margin="10,0,0,0" Click="wnContracts_click"/>
+                <Button Grid.Column="1" x:Name="BtnWnBills" Content="Bills" IsEnabled="False"/>
+                <Button Grid.Column="2" x:Name="BtnWnClients" Content="Clients" Margin="10,0" Click="wnClients_click"/>
+                <Button Grid.Column="3" x:Name="BtnWnContracts" Content="Contracts" Margin="10,0,0,0" Click="wnContracts_click"/>
             </Grid>
         </StackPanel>
     </StackPanel>

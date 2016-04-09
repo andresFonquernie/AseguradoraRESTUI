@@ -1,108 +1,79 @@
-﻿using AseguradoraRESTUI.Models;
-using AseguradoraRESTUI.Services;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
+using AseguradoraRESTUI.Models;
+using AseguradoraRESTUI.Services;
 
-namespace AseguradoraRESTUI.Views
+namespace AseguradoraRESTUI
 {
     /// <summary>
     /// Lógica de interacción para editClients.xaml
     /// </summary>
-    public partial class editContracts : Window
+    public partial class EditContracts
     {
-        public editContracts()
+        public EditContracts()
         {
             InitializeComponent();
         }
 
-        private async void editContract_initializated(object sender, EventArgs e)
+        private void editContract_initializated(object sender, EventArgs e)
         {
             ContractsServices cS = new ContractsServices();
-            List<Contract> contract = await cS.get();
+            List<Contract> contract = cS.Get();
             foreach(Contract cnt in contract)
             {
-                cboxID.Items.Add(cnt.ID);
+                CboxId.Items.Add(cnt.Id);
             }
         }
 
-        private async void cboxIDChange(object sender, SelectionChangedEventArgs e)
+        private void CboxIdChange(object sender, SelectionChangedEventArgs e)
         {
             ContractsServices cS = new ContractsServices();
-            int idContract = Int32.Parse(cboxID.SelectedItem.ToString());
-            List<Contract> contract = await cS.get(idContract);
-            txtIDClient.Text = contract[0].Client.ID.ToString();
-            dateDate.SelectedDate = contract[0].Date;
-            txtIDPol.Text = contract[0].policy.ID.ToString();
-            btnAceptar.IsEnabled = true;
-            btnBorrar.IsEnabled = true;
+            int idContract = Int32.Parse(CboxId.SelectedItem.ToString());
+            List<Contract> contract = cS.Get(idContract);
+
+            TxtIdClient.Content = contract[0].Client.Id.ToString();
+            DateDate.SelectedDate = contract[0].Date;
+            TxtIdPol.Content = contract[0].Policy.Id.ToString();
+
+            BtnAceptar.IsEnabled = true;
+            BtnBorrar.IsEnabled = true;
         }
 
-        private async void btnAceptar_Click(object sender, RoutedEventArgs e)
+        private void btnAceptar_Click(object sender, RoutedEventArgs e)
         {
             int id;
             int idClient;
-            DateTime date = DateTime.Parse(dateDate.Text);
             int idPolicy;
-            bool checkNumber;
+            DateTime date = DateTime.Parse(DateDate.Text);
+            Console.WriteLine(date);
+            date = date.AddDays(1);
+            Console.WriteLine(date);
 
-            checkNumber = Int32.TryParse(cboxID.SelectedItem.ToString(), out id);
-            if (!checkNumber)
-            {
-                MessageBox.Show("Error, the ID must be a number", "Error with parameter: ID", MessageBoxButton.OK, MessageBoxImage.Error);
-                return;
-            }
-
-            checkNumber = Int32.TryParse(txtIDClient.Text, out idClient);
-            if (!checkNumber)
-            {
-                MessageBox.Show("Error, the ID Client must be a number", "Error with parameter: ID Client", MessageBoxButton.OK, MessageBoxImage.Error);
-                return;
-            }
-
-            checkNumber = Int32.TryParse(txtIDPol.Text, out idPolicy);
-            if (!checkNumber)
-            {
-                MessageBox.Show("Error, the ID Policy must be a number", "Error with parameter: ID Policy", MessageBoxButton.OK, MessageBoxImage.Error);
-                return;
-            }
+            id = Int32.Parse(CboxId.SelectedItem.ToString());
+            idClient = Int32.Parse(TxtIdClient.Content.ToString());
+            idPolicy = Int32.Parse(TxtIdPol.Content.ToString());
 
 
             ContractsServices cnt = new ContractsServices();
-            String resp = await cnt.put(idClient, id, date, idPolicy);
-            txtIDClient.Text = resp;
-            //if (!added)
-            //{
-            //    MessageBox.Show("Error, your policy exists in the database", "Error adding to DB", MessageBoxButton.OK, MessageBoxImage.Error);
-            //}
-            //else
-            //{
+            cnt.Put(idClient, id, date, idPolicy);
             MessageBox.Show("Edited the contract from our database", "Action completed", MessageBoxButton.OK, MessageBoxImage.Information);
-            //}
+            Close();
         }
 
         private void btnCancelar_Click(object sender, RoutedEventArgs e)
         {
-            this.Close();
+            Close();
         }
 
-        private async void btnBorrar_Click(object sender, RoutedEventArgs e)
+        private void btnBorrar_Click(object sender, RoutedEventArgs e)
         {
             ContractsServices cS = new ContractsServices();
-            int id = Int32.Parse(cboxID.SelectedItem.ToString());
-            await cS.delete(id);
+            int id = Int32.Parse(CboxId.SelectedItem.ToString());
+            cS.Delete(id);
             MessageBox.Show("Contract deleted", "Action completed", MessageBoxButton.OK, MessageBoxImage.Information);
-            this.Close();
+            Close();
         }
     }
 }

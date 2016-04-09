@@ -24,3 +24,5 @@ C:\Programacion\Proyectos\ArquiFrameworks\AseguradoraRESTUI\AseguradoraRESTUI\ob
 C:\Programacion\Proyectos\ArquiFrameworks\AseguradoraRESTUI\AseguradoraRESTUI\obj\Debug\Views\editBills.baml
 C:\Programacion\Proyectos\ArquiFrameworks\AseguradoraRESTUI\AseguradoraRESTUI\obj\Debug\Views\editContracts.g.cs
 C:\Programacion\Proyectos\ArquiFrameworks\AseguradoraRESTUI\AseguradoraRESTUI\obj\Debug\Views\editContracts.baml
+C:\Programacion\Proyectos\ArquiFrameworks\AseguradoraRESTUI\AseguradoraRESTUI\bin\Debug\Newtonsoft.Json.dll
+C:\Programacion\Proyectos\ArquiFrameworks\AseguradoraRESTUI\AseguradoraRESTUI\bin\Debug\Newtonsoft.Json.xml

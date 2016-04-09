@@ -8,8 +8,8 @@ namespace AseguradoraRESTUI.Models
 {
     class Bill
     {
-        public int ID { get; set; }
+        public int Id { get; set; }
         public Client Client { get; set; }
-        public int moneyToPay { get; set; }
+        public int MoneyToPay { get; set; }
     }
 }

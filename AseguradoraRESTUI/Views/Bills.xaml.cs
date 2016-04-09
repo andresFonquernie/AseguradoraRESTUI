@@ -1,24 +1,14 @@
-﻿using AseguradoraRESTUI.Models;
-using AseguradoraRESTUI.Services;
-using AseguradoraRESTUI.Views;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
 using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+using AseguradoraRESTUI.Models;
+using AseguradoraRESTUI.Services;
 
 namespace AseguradoraRESTUI
 {
-    public partial class Bills : Window
+    public partial class Bills
     {
         public Bills()
         {
@@ -27,26 +17,26 @@ namespace AseguradoraRESTUI
 
         private void search_CLick(object sender, RoutedEventArgs e)
         {
-            refreshTable(txtBoxSearch.Text);
+            RefreshTable(TxtBoxSearch.Text);
         }
 
         private void all_Click(object sender, RoutedEventArgs e)
         {
-            refreshTable("All");
+            RefreshTable("All");
         }
 
-        private async void refreshTable(String text)
+        private void RefreshTable(String text)
         {
             List<Bill> bills;
             if (!text.Equals("All"))
             {
                 int idBill;
-                Boolean idCheck = Int32.TryParse(txtBoxSearch.Text, out idBill);
+                Boolean idCheck = Int32.TryParse(TxtBoxSearch.Text, out idBill);
 
                 if (idCheck)
                 {
                     BillServices bS = new BillServices();
-                    bills = await bS.get(idBill);
+                    bills = bS.Get(idBill);
                     AddRows(bills);
                 }
                 else
@@ -58,7 +48,7 @@ namespace AseguradoraRESTUI
             else
             {
                 BillServices bS = new BillServices();
-                bills = await bS.get();
+                bills = bS.Get();
                 RemoveRows();
                 AddRows(bills);
             }
@@ -73,9 +63,9 @@ namespace AseguradoraRESTUI
                 TableRow tR = new TableRow();
                 rg.Rows.Add(tR);
 
-                TableCell id = new TableCell(new Paragraph(new Run((bill[i].ID.ToString()))));
-                TableCell idClient = new TableCell(new Paragraph(new Run(bill[i].Client.ID.ToString())));
-                TableCell money = new TableCell(new Paragraph(new Run(bill[i].moneyToPay.ToString())));
+                TableCell id = new TableCell(new Paragraph(new Run((bill[i].Id.ToString()))));
+                TableCell idClient = new TableCell(new Paragraph(new Run(bill[i].Client.Id.ToString())));
+                TableCell money = new TableCell(new Paragraph(new Run(bill[i].MoneyToPay.ToString())));
 
                 if (i % 2 == 0)
                     tR.Background = Brushes.LightGray;
@@ -91,7 +81,7 @@ namespace AseguradoraRESTUI
                 tR.Cells.Add(money);
             }
             TableBills.RowGroups.Add(rg);
-            btnEditar.IsEnabled = true;
+            BtnEditar.IsEnabled = true;
         }
 
         private void RemoveRows()
@@ -104,31 +94,31 @@ namespace AseguradoraRESTUI
 
         private void editBills_Click(object sender, RoutedEventArgs e)
         {
-            editBills ed = new editBills();
+            EditBills ed = new EditBills();
             ed.Show();
         }
 
-        private async void enviar_Click(object sender, RoutedEventArgs e)
+        private void enviar_Click(object sender, RoutedEventArgs e)
         {
             int idClient;
             int id;
             int money;
             bool checkNumber;
 
-            checkNumber = Int32.TryParse(txtBoxID.Text, out id);
+            checkNumber = Int32.TryParse(TxtBoxId.Text, out id);
             if (!checkNumber)
             {
                 MessageBox.Show("Error, the ID must be a number", "Error with parameter: ID", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
-            checkNumber = Int32.TryParse(txtBoxID.Text, out idClient);
+            checkNumber = Int32.TryParse(TxtBoxId.Text, out idClient);
             if (!checkNumber)
             {
                 MessageBox.Show("Error, the ID Client must be a number", "Error with parameter: ID Client", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
 
-            checkNumber = Int32.TryParse(txtBoxMoney.Text, out money);
+            checkNumber = Int32.TryParse(TxtBoxMoney.Text, out money);
             if (!checkNumber)
             {
                 MessageBox.Show("Error, the money must be a number", "Error with parameter: Money", MessageBoxButton.OK, MessageBoxImage.Error);
@@ -136,7 +126,7 @@ namespace AseguradoraRESTUI
             }
 
             BillServices bs = new BillServices();
-            await bs.post(idClient, id, money);
+            bs.Post(idClient, id, money);
 
             //if (!added)
             //{
@@ -152,14 +142,14 @@ namespace AseguradoraRESTUI
         {
             Clients cl = new Clients();
             cl.Show();
-            this.Close();
+            Close();
         }
 
         private void wnContracts_click(object sender, RoutedEventArgs e)
         {
             Contracts cont = new Contracts();
             cont.Show();
-            this.Close();
+            Close();
         }
     }
 }
