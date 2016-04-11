@@ -19,6 +19,16 @@ namespace AseguradoraRESTUI.Services
 
             JsonDeserializer deserial = new JsonDeserializer();
             List<Contract> contractList = deserial.Deserialize<List<Contract>>(response);
+
+            if (contractList.Count == 0)
+            {
+                contractList = new List<Contract>();
+                Contract c = new Contract();
+                c.ID = -1;
+                contractList.Add(c);
+            }
+
+            Console.WriteLine(response.Content);
             return contractList;
         }
 
@@ -33,28 +43,52 @@ namespace AseguradoraRESTUI.Services
             var response = client.Execute(request);
 
             JsonDeserializer deserial = new JsonDeserializer();
-            List<Contract> contractList = deserial.Deserialize<List<Contract>>(response);
+            List<Contract> contractList;
+
+            try
+            {
+                contractList = deserial.Deserialize<List<Contract>>(response);
+            }
+            catch (Exception)
+            {
+                contractList = new List<Contract>();
+                Contract c = new Contract();
+                c.ID = -1;
+                contractList.Add(c);
+            }
+
             return contractList;
         }
 
-        public String Post(int idClient, int id, DateTime date, int policy)
+        public String Post(int idClient, DateTime date, int policy)
         {
             var client = new RestClient(" http://localhost:52558/");
             var request = new RestRequest("api/ContractsAsync/", Method.POST);
 
             Client cl = GetClients(idClient);
+            string content;
 
-            Policy p = new Policy();
-            p.Id = policy;
-            p.Name = "Hogar";
-            p.Description = "Para el hogar";
-            p.Type = "Del bueno";
+            if (cl == null)
+            {
+                content = "Client Error";
+            }
 
-            request.RequestFormat = DataFormat.Json;
-            request.AddBody(new { ID = id, Date = date, client = cl, policy = p }); // uses JsonSerializer
+            else
+            {
+                Policy p = new Policy();
+                p.ID = policy;
+                p.name = "Hogar";
+                p.description = "Para el hogar";
+                p.type = "Del bueno";
+                int id = policy;
 
-            var response = client.Execute(request);
-            var content = response.Content;
+                request.RequestFormat = DataFormat.Json;
+                request.AddBody(new {ID = id, Date = date, client = cl, policy = p}); // uses JsonSerializer
+
+                var response = client.Execute(request);
+                Console.Write(response.Content);
+                content = response.Content;
+            }
             return content;
         }
 
@@ -66,10 +100,10 @@ namespace AseguradoraRESTUI.Services
             Client cl = GetClients(idClient);
 
             Policy p = new Policy();
-            p.Id = policy;
-            p.Name = "Hogar";
-            p.Description = "Para el hogar";
-            p.Type = "Del bueno";
+            p.ID = policy;
+            p.name = "Hogar";
+            p.description = "Para el hogar";
+            p.type = "Del bueno";
 
             request.RequestFormat = DataFormat.Json;
             request.AddParameter("id", id, ParameterType.UrlSegment);
@@ -99,9 +133,16 @@ namespace AseguradoraRESTUI.Services
             List<Client> lc = clS.Get(idClient);
 
             Client client = new Client();
-            client.Id = lc[0].Id;
-            client.Dni = lc[0].Dni;
-            client.Name = lc[0].Name;
+
+            if (lc[0].ID == -1)
+                client = null;
+            else
+            {
+                Console.Write("TENEMOS CLIENTE");
+                client.ID = lc[0].ID;
+                client.DNI = lc[0].DNI;
+                client.Name = lc[0].Name;
+            }
 
             return client;
         }

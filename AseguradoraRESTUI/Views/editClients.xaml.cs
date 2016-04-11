@@ -23,7 +23,7 @@ namespace AseguradoraRESTUI
             List<Client> client = cl.Get();
             foreach(Client person in client)
             {
-                CboxId.Items.Add(person.Id);
+                CboxId.Items.Add(person.ID);
             }
         }
 
@@ -32,7 +32,7 @@ namespace AseguradoraRESTUI
             ClientServices cl = new ClientServices();
             int idClient = Int32.Parse(CboxId.SelectedItem.ToString());
             List<Client> client = cl.Get(idClient);
-            TxtDni.Text = client[0].Dni;
+            TxtDni.Text = client[0].DNI;
             TxtName.Text = client[0].Name;
             BtnAceptar.IsEnabled = true;
             BtnBorrar.IsEnabled = true;
@@ -48,10 +48,10 @@ namespace AseguradoraRESTUI
             String resp = cl.Put(id, dni, name);
 
 
-            Boolean dniCheck = resp.Contains("DNI malformed");
+            Boolean dniFormatCheck = resp.Contains("DNI malformed");
+            Boolean dniLengthCheck = resp.Contains("longitud mínima de '9'");
 
-            //No funciona
-            if (dniCheck)
+            if (dniFormatCheck || dniLengthCheck)
             {
                 MessageBox.Show("Error, the format of the DNI is 11111111A", "Error adding to DB", MessageBoxButton.OK, MessageBoxImage.Error);
             }

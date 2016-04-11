@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using AseguradoraRESTUI.Models;
@@ -20,12 +21,42 @@ namespace AseguradoraRESTUI
         private void editContract_initializated(object sender, EventArgs e)
         {
             ContractsServices cS = new ContractsServices();
-            List<Contract> contract = cS.Get();
-            foreach(Contract cnt in contract)
+            List<Contract> contracts = cS.Get();
+
+            int size = contracts.Count;
+            for (var i = 0; i < size; i++)
             {
-                CboxId.Items.Add(cnt.Id);
+                if (contracts[i] != null)
+                {
+                    if (contracts[i].client != null)
+                    {
+                        if (contracts[i].client.Contracts != null)
+                        {
+                            List<Contract> clContract = contracts[i].client.Contracts;
+
+                            for (var j = 0; j < clContract.Count; j++)
+                            {
+                                clContract[j].client = contracts[i].client;
+                                contracts.Add(clContract[j]);
+                            }
+                        }
+                    }
+                }
+            }
+            List<Contract> SortedList = contracts.OrderBy(Contract => Contract.ID).ToList();
+
+            for (int i = 0; i < SortedList.Count; i++)
+            {
+                if (SortedList[i].client != null)
+                {
+                    if (SortedList[i].ID > 0)
+                    {
+                        CboxId.Items.Add(SortedList[i].ID);
+                    }
+                }
             }
         }
+
 
         private void CboxIdChange(object sender, SelectionChangedEventArgs e)
         {
@@ -33,9 +64,9 @@ namespace AseguradoraRESTUI
             int idContract = Int32.Parse(CboxId.SelectedItem.ToString());
             List<Contract> contract = cS.Get(idContract);
 
-            TxtIdClient.Content = contract[0].Client.Id.ToString();
+            TxtIdClient.Content = contract[0].client.ID.ToString();
             DateDate.SelectedDate = contract[0].Date;
-            TxtIdPol.Content = contract[0].Policy.Id.ToString();
+            TxtIdPol.Content = contract[0].policy.ID.ToString();
 
             BtnAceptar.IsEnabled = true;
             BtnBorrar.IsEnabled = true;
@@ -47,9 +78,7 @@ namespace AseguradoraRESTUI
             int idClient;
             int idPolicy;
             DateTime date = DateTime.Parse(DateDate.Text);
-            Console.WriteLine(date);
             date = date.AddDays(1);
-            Console.WriteLine(date);
 
             id = Int32.Parse(CboxId.SelectedItem.ToString());
             idClient = Int32.Parse(TxtIdClient.Content.ToString());

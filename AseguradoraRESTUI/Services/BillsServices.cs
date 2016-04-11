@@ -1,4 +1,5 @@
-﻿using AseguradoraRESTUI.Models;
+﻿using System;
+using AseguradoraRESTUI.Models;
 using RestSharp;
 using RestSharp.Deserializers;
 using System.Collections.Generic;
@@ -18,6 +19,15 @@ namespace AseguradoraRESTUI.Services
 
             JsonDeserializer deserial = new JsonDeserializer();
             List<Bill> billList = deserial.Deserialize<List<Bill>>(response);
+
+            if (billList.Count == 0)
+            {
+                billList = new List<Bill>();
+                Bill b = new Bill();
+                b.ID = -1;
+                billList.Add(b);
+            }
+
             return billList;
         }
 
@@ -32,22 +42,47 @@ namespace AseguradoraRESTUI.Services
             var response = client.Execute(request);
 
             JsonDeserializer deserial = new JsonDeserializer();
-            List<Bill> billList = deserial.Deserialize<List<Bill>>(response);
+            List<Bill> billList;
+
+            try
+            {
+                billList = deserial.Deserialize<List<Bill>>(response);
+            }
+            catch (Exception)
+            {
+                billList = new List<Bill>();
+                Bill b = new Bill();
+                b.ID = -1;
+                billList.Add(b);
+            }
+
             return billList;
         }
 
-        public string Post(int idClient, int id, int money)
+        public string Post(int idClient, int money)
         {
             var client = new RestClient(" http://localhost:52558/");
             var request = new RestRequest("api/BillsAsync/", Method.POST);
 
+            string content;
+
             Client cl = GetClients(idClient);
 
-            request.RequestFormat = DataFormat.Json;
-            request.AddBody(new { ID = id, moneyToPay = money, Client = cl }); // uses JsonSerializer
+            if (cl == null)
+            {
+                content = "Client Error";
+            }
 
-            var response = client.Execute(request);
-            var content = response.Content;
+            else
+            {
+                int id = 1;
+                request.RequestFormat = DataFormat.Json;
+                request.AddBody(new { ID = id, moneyToPay = money, Client = cl }); // uses JsonSerializer
+
+                var response = client.Execute(request);
+                content = response.Content;
+            }
+            
             return content;
         }
 
@@ -90,9 +125,15 @@ namespace AseguradoraRESTUI.Services
             List<Client> lc = clS.Get(idClient);
 
             Client client = new Client();
-            client.Id = lc[0].Id;
-            client.Dni = lc[0].Dni;
-            client.Name = lc[0].Name;
+
+            if (lc[0].ID == -1)
+                client = null;
+            else
+            {
+                client.ID = lc[0].ID;
+                client.DNI = lc[0].DNI;
+                client.Name = lc[0].Name;
+            }
 
             return client;
         }

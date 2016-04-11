@@ -1,4 +1,5 @@
-﻿using AseguradoraRESTUI.Models;
+﻿using System;
+using AseguradoraRESTUI.Models;
 using RestSharp;
 using RestSharp.Deserializers;
 using System.Collections.Generic;
@@ -18,6 +19,15 @@ namespace AseguradoraRESTUI.Services
 
             JsonDeserializer deserial = new JsonDeserializer();
             List<Client> clientList = deserial.Deserialize<List<Client>>(response);
+
+            if (clientList.Count == 0)
+            {
+                clientList = new List<Client>();
+                Client c = new Client();
+                c.ID = -1;
+                clientList.Add(c);
+            }
+
             return clientList;
         }
 
@@ -32,7 +42,19 @@ namespace AseguradoraRESTUI.Services
             var response = client.Execute(request);
 
             JsonDeserializer deserial = new JsonDeserializer();
-            List<Client> clientList = deserial.Deserialize<List<Client>>(response);
+            List<Client> clientList;
+
+            try
+            {
+                clientList = deserial.Deserialize<List<Client>>(response);
+            }
+            catch (Exception)
+            {
+                clientList = new List<Client>();
+                Client c = new Client();
+                c.ID = -1;
+                clientList.Add(c);
+            }
             return clientList;
         }
 
@@ -56,7 +78,7 @@ namespace AseguradoraRESTUI.Services
 
             request.RequestFormat = DataFormat.Json;
             request.AddParameter("id", id, ParameterType.UrlSegment);
-            request.AddBody(new {ID = id, name, DNI = dni }); // uses JsonSerializer
+            request.AddBody(new { ID = id, name, DNI = dni }); // uses JsonSerializer
 
             var response = client.Execute(request);
             var content = response.Content;

@@ -8,9 +8,9 @@ namespace AseguradoraRESTUI.Models
 {
     class Contract
     {
-        public int Id { get; set; }
+        public int ID { get; set; }
         public DateTime Date { get; set; }
-        public Client Client { get; set; }
-        public Policy Policy { get; set; }
+        public Client client { get; set; }
+        public Policy policy { get; set; }
     }
 }

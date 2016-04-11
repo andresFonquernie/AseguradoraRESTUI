@@ -3,6 +3,7 @@ using AseguradoraRESTUI.Services;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using System.Windows;
 using System.Windows.Documents;
 using System.Windows.Media;
@@ -18,7 +19,7 @@ namespace AseguradoraRESTUI
 
         private void search_CLick(object sender, RoutedEventArgs e)
         {
-            RefreshTable(TxtBoxId.Text);
+            RefreshTable(TxtBoxSearch.Text);
         }
 
         private void all_Click(object sender, RoutedEventArgs e)
@@ -51,8 +52,30 @@ namespace AseguradoraRESTUI
             {
                 ContractsServices cS = new ContractsServices();
                 contracts = cS.Get();
+                int size = contracts.Count;
+                for (var i = 0; i < size; i++)
+                {
+                    if (contracts[i] != null)
+                    {
+                        if (contracts[i].client != null)
+                        {
+                            if (contracts[i].client.Contracts != null)
+                            {
+                                List<Contract> clContracts = contracts[i].client.Contracts;
+
+                                for (var j = 0; j < clContracts.Count; j++)
+                                {
+                                    clContracts[j].client = contracts[i].client;
+                                    contracts.Add(clContracts[j]);
+                                }
+                            }
+                        }
+
+                    }
+                }
+                List<Contract> SortedList = contracts.OrderBy(Contract => Contract.ID).ToList();
                 RemoveRows();
-                AddRows(contracts);
+                AddRows(SortedList);
             }
         }
 
@@ -60,31 +83,47 @@ namespace AseguradoraRESTUI
         {
             var rg = new TableRowGroup();
 
-            for (int i = 0; i < contract.Count; i++)
+            if (contract[0].ID == -1)
             {
-                TableRow tR = new TableRow();
-                rg.Rows.Add(tR);
+                MessageBox.Show("Error, there is no contract in our database", "Error", MessageBoxButton.OK,
+                    MessageBoxImage.Error);
 
-                TableCell id = new TableCell(new Paragraph(new Run((contract[i].Id.ToString()))));
-                TableCell idClient = new TableCell(new Paragraph(new Run(contract[i].Client.Id.ToString())));
-                TableCell date = new TableCell(new Paragraph(new Run(contract[i].Date.ToString(CultureInfo.CurrentCulture))));
-                TableCell policy = new TableCell(new Paragraph(new Run(contract[i].Policy.Id.ToString())));
+            }
+            else
+            {
+                for (int i = 0; i < contract.Count; i++)
+                {
+                    TableRow tR = new TableRow();
+                    rg.Rows.Add(tR);
+                    if (contract[i].client != null)
+                    {
+                        if (contract[i].ID > 0)
+                        {
 
+                            TableCell id = new TableCell(new Paragraph(new Run((contract[i].ID.ToString()))));
+                            TableCell idClient = new TableCell(new Paragraph(new Run(contract[i].client.Name)));
+                            TableCell date =
+                                new TableCell(
+                                    new Paragraph(new Run(contract[i].Date.ToString(CultureInfo.CurrentCulture))));
+                            TableCell policy = new TableCell(new Paragraph(new Run("1")));
 
-                if (i % 2 == 0)
-                    tR.Background = Brushes.LightGray;
-                else
-                    tR.Background = Brushes.White;
+                            if (i%2 == 0)
+                                tR.Background = Brushes.LightGray;
+                            else
+                                tR.Background = Brushes.White;
 
-                id.TextAlignment = TextAlignment.Center;
-                idClient.TextAlignment = TextAlignment.Center;
-                date.TextAlignment = TextAlignment.Center;
-                policy.TextAlignment = TextAlignment.Center;
+                            id.TextAlignment = TextAlignment.Center;
+                            idClient.TextAlignment = TextAlignment.Center;
+                            date.TextAlignment = TextAlignment.Center;
+                            policy.TextAlignment = TextAlignment.Center;
 
-                tR.Cells.Add(idClient);
-                tR.Cells.Add(id);
-                tR.Cells.Add(date);
-                tR.Cells.Add(policy);
+                            tR.Cells.Add(idClient);
+                            tR.Cells.Add(id);
+                            tR.Cells.Add(date);
+                            tR.Cells.Add(policy);
+                        }
+                    }
+                }
             }
             TableContracts.RowGroups.Add(rg);
             BtnEditar.IsEnabled = true;
@@ -109,15 +148,9 @@ namespace AseguradoraRESTUI
             int id;
             int idClient;
             DateTime date = DateTime.Parse(DatePicker.Text);
+            date = date.AddDays(1);
             int idPolicy;
             bool checkNumber;
-
-            checkNumber = Int32.TryParse(TxtBoxId.Text, out id);
-            if (!checkNumber)
-            {
-                MessageBox.Show("Error, the ID must be a number", "Error with parameter: ID", MessageBoxButton.OK, MessageBoxImage.Error);
-                return;
-            }
 
             checkNumber = Int32.TryParse(TxtBoxIdClient.Text, out idClient);
             if (!checkNumber)
@@ -126,24 +159,16 @@ namespace AseguradoraRESTUI
                 return;
             }
 
-            checkNumber = Int32.TryParse(TxtBoxPolicy.Text, out idPolicy);
-            if (!checkNumber)
-            {
-                MessageBox.Show("Error, the ID Policy must be a number", "Error with parameter: ID Policy", MessageBoxButton.OK, MessageBoxImage.Error);
-                return;
-            }
-
-
             ContractsServices cnt = new ContractsServices();
-            cnt.Post(idClient, id, date, idPolicy);
-            //if (!added)
-            //{
-            //    MessageBox.Show("Error, your policy exists in the database", "Error adding to DB", MessageBoxButton.OK, MessageBoxImage.Error);
-            //}
-            //else
-            //{
+            string s = cnt.Post(idClient, date, 1);
+            if (s.Equals("Client Error"))
+            {
+                MessageBox.Show("Error, the client doesn't exist in the database", "Error adding to DB", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+            else
+            {
                 MessageBox.Show("Added the new contract to our database", "Action completed", MessageBoxButton.OK, MessageBoxImage.Information);
-            //}
+            }
         }
 
         private void wnBills_click(object sender, RoutedEventArgs e)

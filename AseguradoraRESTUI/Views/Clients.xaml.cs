@@ -59,27 +59,35 @@ namespace AseguradoraRESTUI
         {
             var rg = new TableRowGroup();
 
-            for (var i=0; i<client.Count; i++)
+            if (client[0].ID == -1)
             {
-                var tR = new TableRow();
-                rg.Rows.Add(tR);
-
-                var id = new TableCell(new Paragraph(new Run((client[i].Id.ToString()))));
-                var dni = new TableCell(new Paragraph(new Run(client[i].Dni)));
-                var name = new TableCell(new Paragraph(new Run(client[i].Name)));
-
-                tR.Background = i % 2 == 0 ? Brushes.LightGray : Brushes.White;
-
-                id.TextAlignment = TextAlignment.Center;
-                dni.TextAlignment = TextAlignment.Center;
-                name.TextAlignment = TextAlignment.Center;
-
-                tR.Cells.Add(id);
-                tR.Cells.Add(dni);
-                tR.Cells.Add(name);
+                MessageBox.Show("Error, there is no client in our database", "Error", MessageBoxButton.OK,
+                    MessageBoxImage.Error);
             }
-            TableClients.RowGroups.Add(rg);
-            BtnEditar.IsEnabled = true;
+            else
+            {
+                for (var i = 0; i < client.Count; i++)
+                {
+                    var tR = new TableRow();
+                    rg.Rows.Add(tR);
+
+                    var id = new TableCell(new Paragraph(new Run((client[i].ID.ToString()))));
+                    var dni = new TableCell(new Paragraph(new Run(client[i].DNI)));
+                    var name = new TableCell(new Paragraph(new Run(client[i].Name)));
+
+                    tR.Background = i%2 == 0 ? Brushes.LightGray : Brushes.White;
+
+                    id.TextAlignment = TextAlignment.Center;
+                    dni.TextAlignment = TextAlignment.Center;
+                    name.TextAlignment = TextAlignment.Center;
+
+                    tR.Cells.Add(id);
+                    tR.Cells.Add(dni);
+                    tR.Cells.Add(name);
+                }
+                TableClients.RowGroups.Add(rg);
+                BtnEditar.IsEnabled = true;
+            }
         }
 
         private void RemoveRows()
@@ -103,6 +111,7 @@ namespace AseguradoraRESTUI
             string name = TxtBoxName.Text;
 
             bool result = Int32.TryParse(TxtBoxId.Text, out id);
+
             if (!result)
             {
                 MessageBox.Show("Error, the ID must be a number", "Error with parameter: ID", MessageBoxButton.OK, MessageBoxImage.Error);
@@ -112,12 +121,10 @@ namespace AseguradoraRESTUI
             ClientServices cl = new ClientServices();
             string resp = cl.Post(id, dni, name);
 
-            var dniCheck = resp.Contains("DNI malformed");
+            var dniFormatCheck = resp.Contains("DNI malformed");
+            var dniLengthCheck = resp.Contains("longitud mínima de '9'");
 
-            TxtBoxDni.Text = resp;
-
-            //No funciona
-            if (dniCheck)
+            if (dniFormatCheck || dniLengthCheck)
             {
                 MessageBox.Show("Error, the format of the DNI is 11111111A", "Error adding to DB", MessageBoxButton.OK, MessageBoxImage.Error);
             }
